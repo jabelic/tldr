@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "My Extension",
+  "name": "TL;DR.",
   "version": "0.1.0",
-  "description": "My Chrome Extension",
+  "description": "Too Long; Didn't Read.",
   "icons": {
     "16": "icons/icon_16.png",
     "32": "icons/icon_32.png",
@@ -16,11 +16,13 @@
     "persistent": false
   },
   "browser_action": {
-    "default_title": "My Extension",
-    "default_popup": "popup.html"
+    "default_title": "tl;dr"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "tabs",
+    "bookmarks",
+    "activeTab"
   ],
   "content_scripts": [
     {
