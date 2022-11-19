@@ -1,12 +1,14 @@
 "use strict";
 import {
   ASANA_TOKEN,
-  SECTION_GID,
-  PROJECT_ID,
-  WORKSPACE_ID,
-  WEBHOOK,
-  TRELLOKEY,
-  TRELLOTOKEN,
+  ASANA_SECTION_GID,
+  ASANA_PROJECT_ID,
+  ASANA_WORKSPACE_ID,
+  SLACK_WEBHOOK,
+  SLACK_CHANNEL,
+  SLACK_USERNAME,
+  TRELLO_KEY,
+  TRELLO_TOKEN,
   TRELLO_USERNAME,
   TRELLO_BOARD_ID,
   TRELLO_LIST_NAME
@@ -17,7 +19,7 @@ const client = asana.Client.create().useAccessToken(ASANA_TOKEN);
 
 /** for Trello: get board id list. */
 async function getBoardList() {
-  const url = `https://api.trello.com/1/boards/${TRELLO_BOARD_ID}/lists/?key=${TRELLOKEY}&token=${TRELLOTOKEN}`
+  const url = `https://api.trello.com/1/boards/${TRELLO_BOARD_ID}/lists/?key=${TRELLO_KEY}&token=${TRELLO_TOKEN}`
   const options = {
     method: "GET",
     headers: {
@@ -46,7 +48,7 @@ function addList() {
   //顧客にlistを作る
   const boardId = "5cbd620b7e4b1f684459c5e5";
   const url =
-    `https://api.trello.com/1/boards/${boardId}/lists/?key=${trelloKey}&token=${trelloToken}`;
+    `https://api.trello.com/1/boards/${boardId}/lists/?key=${TRELLO_KEY}&token=${TRELLO_TOKEN}`;
   const options = {
     method: "post",
     muteHttpExceptions: true,
@@ -60,12 +62,12 @@ function addList() {
 
 async function addCardToTrello(item, listId){
   if (!item) return;
-  const trello_url = `https://api.trello.com/1/cards?idList=${listId}&key=${TRELLOKEY}&token=${TRELLOTOKEN}`;
+  const trello_url = `https://api.trello.com/1/cards?idList=${listId}&key=${TRELLO_KEY}&token=${TRELLO_TOKEN}`;
   const options = {
     method: "POST",
     body: JSON.stringify({
           name: item.title,
-          desc: 'sdfsdfdf',
+          desc: '',
           idList: listId,
           urlSource: item.url
       }),
@@ -83,11 +85,11 @@ async function addCardToTrello(item, listId){
 async function addPostToSlack(item) {
   var payload = {
     text: item.title + "  " + item.url,
-    username: "TL;DR",
-    channel: "#tldr",
+    username: SLACK_USERNAME,
+    channel: SLACK_CHANNEL,
   };
   // post to slack
-  await fetch(WEBHOOK, {
+  await fetch(SLACK_WEBHOOK, {
       method: "POST",
       body: JSON.stringify(payload),
     })
@@ -100,9 +102,9 @@ async function addTaskToAsana(tab){
     body: { data: {} },
     name: tab.title,
     notes: tab.url,
-    workspace: WORKSPACE_ID,
-    projects: PROJECT_ID,
-    section: SECTION_GID,
+    workspace: ASANA_WORKSPACE_ID,
+    projects: ASANA_PROJECT_ID,
+    section: ASANA_SECTION_GID,
     pretty: true,
   })
   .then((result) => {
@@ -112,13 +114,17 @@ async function addTaskToAsana(tab){
 
 
 chrome.browserAction.onClicked.addListener(async function (tab) {
+  // Post to Slack
   await addPostToSlack({ url: tab.url, title: tab.title });
+  
+  // Add task card to Trello
   const lists = await getBoardList()
   if(!lists) return;
   const list_info = lists.find(elem =>
     elem.name === TRELLO_LIST_NAME
   );
   await addCardToTrello({ url: tab.url, title: tab.title }, list_info.id)
+  
   // Add task card to Asana.
   await addTaskToAsana(tab);
 });
