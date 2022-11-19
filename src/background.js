@@ -18,15 +18,6 @@ const client = asana.Client.create().useAccessToken(ASANA_TOKEN);
 /** for Trello: get board id list. */
 async function getBoardList() {
   const url = `https://api.trello.com/1/boards/${TRELLO_BOARD_ID}/lists/?key=${TRELLOKEY}&token=${TRELLOTOKEN}`
-  // const url =
-  //   "https://api.trello.com/1/members/" +
-  //   TRELLO_USERNAME +
-  //   "/boards?key=" +
-  //   TRELLOKEY +
-  //   "&token=" +
-  //   TRELLOTOKEN //+
-  //   //"&fields=name";
-  // console.log(url)
   const options = {
     method: "GET",
     headers: {
@@ -69,18 +60,12 @@ function addList() {
       pos: "top",
     },
   };
-  console.log(fetch(url, options));
+  fetch(url, options);
 }
 
 async function addCardToTrello(item, listId){
   if (!item) return;
   const trello_url = `https://api.trello.com/1/cards?idList=${listId}&key=${TRELLOKEY}&token=${TRELLOTOKEN}`;
-  const  payload = {
-          name: item.title,
-          desc: 'sdfsdfdf',
-          idList: listId,
-          urlSource: item.url
-      }
   const options = {
     method: "POST",
     body: JSON.stringify({
@@ -134,25 +119,12 @@ async function addTaskToAsana(tab){
 chrome.browserAction.onClicked.addListener(async function (tab) {
   await addPostToSlack({ url: tab.url, title: tab.title });
   const lists = await getBoardList()
-  if(!lists) return ;
-  const list_info = lists.find(elem => 
+  if(!lists) return;
+  const list_info = lists.find(elem =>
     elem.name === TRELLO_LIST_NAME
   );
   // console.log(list_info)
   await addCardToTrello({ url: tab.url, title: tab.title }, list_info.id)
   // Add task card to Asana.
   await addTaskToAsana(tab);
-  // client.tasks
-  //   .createTask({
-  //     body: { data: {} },
-  //     name: tab.title,
-  //     notes: tab.url,
-  //     workspace: WORKSPACE_ID,
-  //     projects: PROJECT_ID,
-  //     section: SECTION_GID,
-  //     pretty: true,
-  //   })
-  //   .then((result) => {
-  //     console.log(result);
-  //   });
 });
