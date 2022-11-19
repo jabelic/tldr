@@ -2,7 +2,6 @@ export const ASANA_TOKEN="";
 export const CLIENT_ID = "";
 export const CLIENT_SECRET = "";
 export const SECTION_GID="";
-export const tldr_section_gid = ""
 export const PROJECT_ID="";
 export const WORKSPACE_ID=''
 

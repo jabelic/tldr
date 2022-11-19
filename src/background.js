@@ -46,12 +46,7 @@ function addList() {
   //顧客にlistを作る
   const boardId = "5cbd620b7e4b1f684459c5e5";
   const url =
-    "https://api.trello.com/1/boards/" +
-    boardId +
-    "/lists/?key=" +
-    trelloKey +
-    "&token=" +
-    trelloToken;
+    `https://api.trello.com/1/boards/${boardId}/lists/?key=${trelloKey}&token=${trelloToken}`;
   const options = {
     method: "post",
     muteHttpExceptions: true,
@@ -123,7 +118,6 @@ chrome.browserAction.onClicked.addListener(async function (tab) {
   const list_info = lists.find(elem =>
     elem.name === TRELLO_LIST_NAME
   );
-  // console.log(list_info)
   await addCardToTrello({ url: tab.url, title: tab.title }, list_info.id)
   // Add task card to Asana.
   await addTaskToAsana(tab);
