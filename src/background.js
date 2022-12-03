@@ -13,6 +13,7 @@ import {
   TRELLO_BOARD_ID,
   TRELLO_LIST_NAME
 } from "../env";
+import { createRecord } from "./airTable"
 
 const asana = require("asana/dist/asana-min.js");
 const client = asana.Client.create().useAccessToken(ASANA_TOKEN);
@@ -116,7 +117,7 @@ async function addTaskToAsana(tab){
 chrome.browserAction.onClicked.addListener(async function (tab) {
   // Post to Slack
   await addPostToSlack({ url: tab.url, title: tab.title });
-  
+
   // Add task card to Trello
   const lists = await getBoardList()
   if(!lists) return;
@@ -124,7 +125,10 @@ chrome.browserAction.onClicked.addListener(async function (tab) {
     elem.name === TRELLO_LIST_NAME
   );
   await addCardToTrello({ url: tab.url, title: tab.title }, list_info.id)
-  
+
   // Add task card to Asana.
   await addTaskToAsana(tab);
+
+  // Create Record To AirTable
+  await createRecord(tab);
 });

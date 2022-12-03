@@ -16,3 +16,11 @@ export const TRELLO_USERNAME="";
 export const TRELLO_TOKEN=""
 export const TRELLO_BOARD_ID="";
 export const TRELLO_LIST_NAME="";
+
+// AirTable
+export const AIRTABLE_API_KEY=""
+export const AIRTABLE_BASE_URL=""
+export const AIRTABLE_BASE_ID=""
+export const AIRTABLE_TABLE_ID=""
+export const AIRTABLE_STATUS=""
+export const AIRTABLE_FIELD=""
