@@ -41,7 +41,6 @@ export const createRecord = async (tab) =>{
         body: raw,
         redirect: 'follow'
     };
-    console.debug(toLocaleString(new Date()))
     fetch(url, requestOptions)
     .then(response => response.text())
     .then(result => console.log(result))

@@ -14,8 +14,9 @@ import {
   TRELLO_LIST_NAME
 } from "../env";
 import { createRecord } from "./airTable"
+import { postLinkToJira } from "./jira/jira"
+import asana from "asana"
 
-const asana = require("asana/dist/asana-min.js");
 const client = asana.Client.create().useAccessToken(ASANA_TOKEN);
 
 /** for Trello: get board id list. */
@@ -131,4 +132,7 @@ chrome.browserAction.onClicked.addListener(async function (tab) {
 
   // Create Record To AirTable
   await createRecord(tab);
+
+  // Post Jira 
+  await postLinkToJira({url: tab.url, title: tab.title})
 });
